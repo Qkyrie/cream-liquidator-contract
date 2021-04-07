@@ -1,6 +1,3 @@
-require("@nomiclabs/hardhat-waffle");
-require("@nomiclabs/hardhat-web3");
-
 const MNEMONIC_PATH = "m/44'/60'/0'/0";
 const MNEMONIC = process.env.MNEMONIC || '';
 const DEFAULT_BLOCK_GAS_LIMIT = 10000000;
