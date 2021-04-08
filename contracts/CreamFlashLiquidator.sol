@@ -1,9 +1,9 @@
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./IUniswapV2Factory.sol";
 import "./IUniswapV2Router.sol";
 import "./IComptroller.sol";
@@ -26,6 +26,8 @@ contract CreamFlashLiquidator is Ownable, FlashLoanReceiverBase {
     address public wBNB = 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c;
 
     using SafeERC20 for IERC20;
+
+    uint256 public MAX_INT = 2 ** 256 - 1;
 
     constructor() FlashLoanReceiverBase(ILendingPoolAddressesProvider(0xCc0479a98cC66E85806D0Cd7970d6e07f77Fd633)) Ownable() public {
 
@@ -92,7 +94,7 @@ contract CreamFlashLiquidator is Ownable, FlashLoanReceiverBase {
             IWETH(wBNB).withdraw(wBNBBalance);
         }
 
-        uint256 totalDebt = _amount.add(_fee);
+        uint256 totalDebt = _amount + _fee;
         console.log('total debt is %', totalDebt);
         console.log('we have %', address(this).balance);
         console.log('vDebt: %s', IERC20(liquidationData.vTokenDebt).balanceOf(address(this)));
@@ -205,7 +207,7 @@ contract CreamFlashLiquidator is Ownable, FlashLoanReceiverBase {
         IERC20 token = IERC20(asset);
 
         if (token.allowance(address(this), allowee) == 0) {
-            token.safeApprove(allowee, uint256(- 1));
+            token.safeApprove(allowee, MAX_INT);
         }
     }
 
@@ -215,6 +217,6 @@ contract CreamFlashLiquidator is Ownable, FlashLoanReceiverBase {
 
 
     function withdraw() public onlyOwner {
-        msg.sender.transfer(address(this).balance);
+        payable(msg.sender).transfer(address(this).balance);
     }
 }

@@ -11,11 +11,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@openzeppelin/contracts": "^4.0.0",
     "chai": "4.3.4",
     "hardhat": "2.1.2"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.0.0",
     "npx": "^10.2.2"
   }
 }
